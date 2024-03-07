@@ -5,7 +5,7 @@ export class MarsRover {
   }
 
   public move(commands: string) {
-    commands.split('').map((command) => {
+    commands.toLowerCase().split('').map((command) => {
       if (command === 'b') {
         this.position.decreaseY();
       } else if (command === 'f') {
