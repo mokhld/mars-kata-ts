@@ -35,7 +35,7 @@ describe('Mars Rover', () => {
     { input: 'S', expected: 'E' },
     { input: 'E', expected: 'N' },
   ])('Position', ({ input, expected }) => {
-    test(`turn left`, () => {
+    test(`turn left (${input})`, () => {
       const direction = new Direction(input);
 
       direction.left();
@@ -50,7 +50,7 @@ describe('Mars Rover', () => {
     { input: 'S', expected: 'W' },
     { input: 'E', expected: 'S' },
   ])('Position', ({ input, expected }) => {
-    test(`turn right`, () => {
+    test(`turn right (${input})`, () => {
       const direction = new Direction(input);
 
       direction.right();
