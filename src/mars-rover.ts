@@ -11,6 +11,8 @@ export class MarsRover {
       this.position.increaseY();
     } else if (commands === 'l') {
       this.position.turnLeft();
+    } else if (commands === 'r') {
+      this.position.turnRight();
     } else {
       throw Error(`Invalid command '${commands}'`);
     }
@@ -71,5 +73,9 @@ export class Position {
 
   public turnLeft() {
     this.direction.left();
+  }
+
+  public turnRight() {
+    this.direction.right();
   }
 }
