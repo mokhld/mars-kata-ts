@@ -31,6 +31,7 @@ export class Direction {
   }
 
   public left() {
+    // @ts-expect-error TODO: fix using enum
     this.facing = this.map[this.facing].left;
   }
 }
