@@ -20,10 +20,10 @@ export class MarsRover {
 export class Direction {
   private facing: string;
   private map = {
-    N: ['W', 'E'],
-    W: ['S', 'N'],
-    S: ['E', 'W'],
-    E: ['N', 'S']
+    N: { left: 'W', right: 'E' },
+    W: { left: 'S', right: 'N' },
+    S: { left: 'E', right: 'W' },
+    E: { left: 'N', right: 'S' }
   };
 
   constructor(facing: string) {
@@ -31,7 +31,7 @@ export class Direction {
   }
 
   public left() {
-    this.facing = this.map[this.facing][0];
+    this.facing = this.map[this.facing].left;
   }
 }
 
