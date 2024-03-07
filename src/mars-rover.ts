@@ -5,17 +5,19 @@ export class MarsRover {
   }
 
   public move(commands: string) {
-    if (commands === 'b') {
-      this.position.decreaseY();
-    } else if (commands === 'f') {
-      this.position.increaseY();
-    } else if (commands === 'l') {
-      this.position.turnLeft();
-    } else if (commands === 'r') {
-      this.position.turnRight();
-    } else {
-      throw Error(`Invalid command '${commands}'`);
-    }
+    commands.split('').map((command) => {
+      if (command === 'b') {
+        this.position.decreaseY();
+      } else if (command === 'f') {
+        this.position.increaseY();
+      } else if (command === 'l') {
+        this.position.turnLeft();
+      } else if (command === 'r') {
+        this.position.turnRight();
+      } else {
+        throw Error(`Invalid command '${command}'`);
+      }
+    });
   }
 }
 
