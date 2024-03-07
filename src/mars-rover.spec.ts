@@ -40,6 +40,10 @@ describe('Mars Rover', () => {
     { input: { x: 0, y: 0, direction: 'S' }, commands: 'f', expected: { x: 0, y: -1 } },
     { input: { x: 0, y: 0, direction: 'E' }, commands: 'f', expected: { x: 1, y: 0 } },
     { input: { x: 0, y: 0, direction: 'W' }, commands: 'f', expected: { x: -1, y: 0 } },
+    { input: { x: 0, y: 0, direction: 'N' }, commands: 'b', expected: { x: 0, y: -1 } },
+    { input: { x: 0, y: 0, direction: 'S' }, commands: 'b', expected: { x: 0, y: 1 } },
+    { input: { x: 0, y: 0, direction: 'E' }, commands: 'b', expected: { x: -1, y: 0 } },
+    { input: { x: 0, y: 0, direction: 'W' }, commands: 'b', expected: { x: 1, y: 0 } },
   ])('Mars Rover', ({ input, commands, expected }) => {
     test(`advancing movements never affect direction. Move '${commands}'. ${input.x}, ${input.y} facing ${input.direction}`, () => {
       const startingPositionRover = initialiseRover(input.x, input.y, input.direction);
