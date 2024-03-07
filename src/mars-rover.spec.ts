@@ -43,4 +43,19 @@ describe('Mars Rover', () => {
       expect(direction).toEqual(new Direction(expected));
     });
   });
+
+  describe.each([
+    { input: 'N', expected: 'E' },
+    { input: 'W', expected: 'N' },
+    { input: 'S', expected: 'W' },
+    { input: 'E', expected: 'S' },
+  ])('Position', ({ input, expected }) => {
+    test(`turn right`, () => {
+      const direction = new Direction(input);
+
+      direction.right();
+
+      expect(direction).toEqual(new Direction(expected));
+    });
+  });
 });
