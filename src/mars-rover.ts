@@ -5,31 +5,22 @@ export class MarsRover {
   }
 
   public move(commands: string) {
-    commands.toLowerCase().split('').map((command) => {
-      if (this.position.direction.facing === 'W') {
-        if (command === 'f') {
+    commands.toLowerCase().split('').forEach((command) => {
+      switch (command) {
+        case 'f':
           this.position.forward();
-        }
-        return;
-      }
-
-      if (this.position.direction.facing === 'S') {
-        if (command === 'f') {
-          this.position.forward();
-        }
-        return;
-      }
-
-      if (command === 'b') {
-        this.position.decreaseY();
-      } else if (command === 'f') {
-        this.position.increaseY();
-      } else if (command === 'l') {
-        this.position.turnLeft();
-      } else if (command === 'r') {
-        this.position.turnRight();
-      } else {
-        throw Error(`Invalid command '${command}'`);
+          break;
+        case 'b':
+          this.position.decreaseY();
+          break;
+        case 'l':
+          this.position.turnLeft();
+          break;
+        case 'r':
+          this.position.turnRight();
+          break;
+        default:
+          throw Error(`Invalid command '${command}'`);
       }
     });
   }
@@ -71,7 +62,7 @@ export class Position {
 
   private x: number;
   private y: number;
-  public direction: Direction;
+  private direction: Direction;
 
   private constructor(x: number, y: number, direction: Direction) {
     this.x = x;
