@@ -9,6 +9,8 @@ export class MarsRover {
       this.position.decreaseY();
     } else if (commands === 'f') {
       this.position.increaseY();
+    } else if (commands === 'l') {
+      this.position.turnLeft();
     } else {
       throw Error(`Invalid command '${commands}'`);
     }
@@ -19,6 +21,10 @@ export class Direction {
   private facing: string;
   constructor(facing: string) {
     this.facing = facing;
+  }
+
+  public left() {
+    this.facing = 'E';
   }
 }
 
@@ -48,5 +54,9 @@ export class Position {
 
   public decreaseY() {
     this.y--;
+  }
+
+  public turnLeft() {
+    this.direction.left();
   }
 }
