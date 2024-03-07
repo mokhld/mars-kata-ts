@@ -6,6 +6,13 @@ export class MarsRover {
 
   public move(commands: string) {
     commands.toLowerCase().split('').map((command) => {
+      if (this.position.direction.facing === 'W') {
+        if (command === 'f') {
+          this.position.decreaseX();
+        }
+        return;
+      }
+
       if (command === 'b') {
         this.position.decreaseY();
       } else if (command === 'f') {
@@ -22,7 +29,7 @@ export class MarsRover {
 }
 
 export class Direction {
-  private facing: string;
+  public facing: string;
   private map = {
     N: { left: 'W', right: 'E' },
     W: { left: 'S', right: 'N' },
@@ -57,7 +64,7 @@ export class Position {
 
   private x: number;
   private y: number;
-  private direction: Direction;
+  public direction: Direction;
 
   private constructor(x: number, y: number, direction: Direction) {
     this.x = x;
@@ -71,6 +78,10 @@ export class Position {
 
   public decreaseY() {
     this.y--;
+  }
+
+  public decreaseX() {
+    this.x--;
   }
 
   public turnLeft() {

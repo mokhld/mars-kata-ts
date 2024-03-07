@@ -11,7 +11,7 @@ describe('Mars Rover', () => {
 
     expect(() => {
       startingPositionRover.move('X');
-    }).toThrow("Invalid command 'X'");
+    }).toThrow("Invalid command 'x'");
   });
 
   describe.each([
