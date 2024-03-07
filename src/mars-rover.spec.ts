@@ -1,4 +1,4 @@
-import { MarsRover } from './mars-rover'
+import { MarsRover, Position } from './mars-rover'
 
 describe.each([
   {
@@ -14,5 +14,8 @@ describe.each([
     const expectedPositionRover = new MarsRover(
       Position.at(expected.x, expected.y).facing(expected.direction)
     )
+
+    // no movement
+    expect(startingPositionRover).toEqual(expectedPositionRover)
   })
 })
