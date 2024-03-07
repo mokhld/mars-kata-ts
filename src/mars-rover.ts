@@ -7,9 +7,11 @@ export class MarsRover {
   public move(commands: string) {
     if (commands === 'b') {
       this.position.decreaseY();
-      return;
+    } else if (commands === 'f') {
+      this.position.increaseY();
+    } else {
+      throw Error(`Invalid command '${commands}'`);
     }
-    this.position.increaseY();
   }
 }
 
