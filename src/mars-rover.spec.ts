@@ -24,7 +24,7 @@ describe('Mars Rover', () => {
     { input: { x: 0, y: 0, direction: 'N' }, commands: 'fb', expected: { x: 0, y: 0, direction: 'N' } },
     { input: { x: 0, y: 0, direction: 'N' }, commands: 'lf', expected: { x: -1, y: 0, direction: 'W' } },
   ])('Mars Rover', ({ input, commands, expected }) => {
-    test(`moves after receiving one command: ${input.x}, ${input.y}, ${commands}, facing ${input.direction}`, () => {
+    test(`moves after receiving commands '${commands}': ${input.x}, ${input.y}, ${commands}, facing ${input.direction}`, () => {
       const startingPositionRover = initialiseRover(input.x, input.y, input.direction);
       const expectedPositionRover = initialiseRover(expected.x, expected.y, expected.direction);
 
