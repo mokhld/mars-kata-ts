@@ -1,17 +1,18 @@
+import { MarsRover } from './mars-rover'
+
 describe.each([
-  { a: 1, b: 1, expected: 2 },
-  { a: 1, b: 2, expected: 3 },
-  { a: 2, b: 1, expected: 3 },
-])('.add($a, $b)', ({ a, b, expected }) => {
-  test(`returns ${expected}`, () => {
-    expect(a + b).toBe(expected)
-  })
+  {
+    input: { x: 0, y: 0, direction: 'N' },
+    expected: { x: 0, y: 0, direction: 'N' },
+  },
+])('Mars Rover', ({ input, expected }) => {
+  test(`stays at the landing position: ${input.x}, ${input.y} facing ${input.direction}`, () => {
+    const startingPositionRover = new MarsRover(
+      Position.at(input.x, input.y).facing(input.direction)
+    )
 
-  test(`returned value not be greater than ${expected}`, () => {
-    expect(a + b).not.toBeGreaterThan(expected)
-  })
-
-  test(`returned value not be less than ${expected}`, () => {
-    expect(a + b).not.toBeLessThan(expected)
+    const expectedPositionRover = new MarsRover(
+      Position.at(expected.x, expected.y).facing(expected.direction)
+    )
   })
 })
