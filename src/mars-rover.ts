@@ -1,4 +1,11 @@
 export class MarsRover {
+  private static map = {
+    f: (position: { forward: () => void; }) => position.forward(),
+    b: (position: { backward: () => void; }) => position.backward(),
+    l: (position: { turnLeft: () => void; }) => position.turnLeft(),
+    r: (position: { turnRight: () => void; }) => position.turnRight(),
+  };
+
   private position: Position;
   constructor(position: Position) {
     this.position = position;
@@ -6,25 +13,19 @@ export class MarsRover {
 
   public move(commands: string) {
     commands.toLowerCase().split('').forEach((command) => {
-      switch (command) {
-        case 'f':
-          this.position.forward();
-          break;
-        case 'b':
-          this.position.backward();
-          break;
-        case 'l':
-          this.position.turnLeft();
-          break;
-        case 'r':
-          this.position.turnRight();
-          break;
-        default:
-          throw Error(`Invalid command '${command}'`);
+      if (this.isValidCommand(command)) {
+        MarsRover.map[command](this.position);
+      } else {
+        throw Error(`Invalid command '${command}'`);
       }
     });
   }
+
+  private isValidCommand(command: string): command is keyof typeof MarsRover.map {
+    return command in MarsRover.map;
+  }
 }
+
 
 export class Direction {
   public facing: string;
@@ -70,19 +71,19 @@ export class Position {
     this.direction = direction;
   }
 
-  public increaseY() {
+  private increaseY() {
     this.y++;
   }
 
-  public increaseX() {
+  private increaseX() {
     this.x++;
   }
 
-  public decreaseY() {
+  private decreaseY() {
     this.y--;
   }
 
-  public decreaseX() {
+  private decreaseX() {
     this.x--;
   }
 
