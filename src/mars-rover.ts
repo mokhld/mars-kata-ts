@@ -11,7 +11,7 @@ export class MarsRover {
           this.position.forward();
           break;
         case 'b':
-          this.position.decreaseY();
+          this.position.backward();
           break;
         case 'l':
           this.position.turnLeft();
@@ -103,6 +103,18 @@ export class Position {
       this.decreaseX();
     } else if (this.direction.facing === 'E') {
       this.increaseX();
+    }
+  }
+
+  public backward() {
+    if (this.direction.facing === 'N') {
+      this.decreaseY();
+    } else if (this.direction.facing === 'S') {
+      this.increaseY();
+    } else if (this.direction.facing === 'W') {
+      this.increaseX();
+    } else if (this.direction.facing === 'E') {
+      this.decreaseX();
     }
   }
 }
