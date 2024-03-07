@@ -5,6 +5,10 @@ export class MarsRover {
   }
 
   public move(commands: string) {
+    if (commands === 'b') {
+      this.position.decreaseY();
+      return;
+    }
     this.position.increaseY();
   }
 }
@@ -38,5 +42,9 @@ export class Position {
 
   public increaseY() {
     this.y++;
+  }
+
+  public decreaseY() {
+    this.y--;
   }
 }
