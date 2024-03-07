@@ -101,6 +101,8 @@ export class Position {
       this.decreaseY();
     } else if (this.direction.facing === 'W') {
       this.decreaseX();
+    } else if (this.direction.facing === 'E') {
+      this.increaseX();
     }
   }
 }
