@@ -1,4 +1,4 @@
-import { MarsRover, Position } from './mars-rover';
+import { Direction, MarsRover, Position } from './mars-rover';
 
 function initialiseRover(x: number, y: number, directionRaw: string) {
   return new MarsRover(Position.at(x, y).facing(directionRaw));
@@ -27,5 +27,17 @@ describe.each([
     startingPositionRover.move(commands);
 
     expect(startingPositionRover).toEqual(expectedPositionRover);
+  });
+});
+
+describe.each([
+  { input: 'N', expected: 'W' },
+])('Position', ({ input, expected }) => {
+  test(`turn left`, () => {
+    const direction = new Direction(input);
+
+    direction.left();
+
+    expect(direction).toEqual(new Direction(expected));
   });
 });
