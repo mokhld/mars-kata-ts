@@ -159,4 +159,30 @@ describe('Mars Rover', () => {
       startingPositionRover.move(longInstruction);
     }).toThrow("Instruction string too long");
   });
+
+  describe.each([
+    {
+      rovers: [
+        { input: { x: 1, y: 1, direction: 'N' }, commands: 'FFRFF', expected: { x: 2, y: 3, direction: 'E' } },
+        { input: { x: 2, y: 2, direction: 'E' }, commands: 'FLFFL', expected: { x: 3, y: 4, direction: 'N' } }
+      ],
+      description: 'should handle multiple rovers sequentially'
+    },
+    {
+      rovers: [
+        { input: { x: 0, y: 0, direction: 'N' }, commands: 'FFFFFFFFFF', expected: { x: 0, y: 10, direction: 'N', lost: true } },
+        { input: { x: 1, y: 1, direction: 'E' }, commands: 'FLFFL', expected: { x: 1, y: 2, direction: 'N' } }
+      ],
+      description: 'should ignore commands for a lost rover'
+    }
+  ])('MarsRover for multiple rovers', ({ rovers, description }) => {
+    it(description, () => {
+      const world = World.unlimited();
+      rovers.forEach(({ input, commands, expected }) => {
+        const rover = new MarsRover(Position.at(input.x, input.y).withinWorld(world).facing(input.direction));
+        rover.move(commands);
+        expect(rover.position).toEqual(expected);
+      });
+    });
+  });
 });
