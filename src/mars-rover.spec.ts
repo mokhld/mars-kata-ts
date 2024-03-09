@@ -1,4 +1,4 @@
-import { Direction, MarsRover, Position, World } from './mars-rover';
+import { Direction, MarsRover, MarsRoverManager, Position, World } from './mars-rover';
 
 function initialiseRover(x, y, directionRaw, world: World = World.unlimited()) {
   return new MarsRover(Position.at(x, y).withinWorld(world).facing(directionRaw));
@@ -163,25 +163,24 @@ describe('Mars Rover', () => {
   describe.each([
     {
       rovers: [
-        { input: { x: 1, y: 1, direction: 'N' }, commands: 'FFRFF', expected: { x: 3, y: 3, direction: 'E', lost: false } },
-        { input: { x: 2, y: 2, direction: 'E' }, commands: 'FLFFL', expected: { x: 3, y: 4, direction: 'W', lost: false } }
+        { input: { x: 1, y: 1, direction: 'E' }, commands: 'RFRFRFRF', expected: { x: 1, y: 1, direction: 'E', lost: false } },
+        { input: { x: 3, y: 2, direction: 'N' }, commands: 'FRRFLLFFRRFLL', expected: { x: 3, y: 3, direction: 'N', lost: true } },
+        { input: { x: 0, y: 3, direction: 'W' }, commands: 'LLFFFLFLFL', expected: { x: 2, y: 3, direction: 'S', lost: false } }
       ],
-      description: 'should handle multiple rovers sequentially'
+      description: 'should handle multiple rovers with different commands'
     },
-    {
-      rovers: [
-        { input: { x: 0, y: 0, direction: 'N' }, commands: 'FFFFFFFFFF', expected: { x: 0, y: 10, direction: 'N', lost: false } },
-        { input: { x: 1, y: 1, direction: 'E' }, commands: 'FLFFL', expected: { x: 2, y: 3, direction: 'W', lost: false } }
-      ],
-      description: 'should ignore commands for a lost rover'
-    }
   ])('MarsRover for multiple rovers', ({ rovers, description }) => {
     it(description, () => {
-      const world = World.unlimited();
-      rovers.forEach(({ input, commands, expected }) => {
+      const world = World.wrapping(5, 3);
+      const manager = new MarsRoverManager();
+      rovers.forEach(({ input }) => {
         const rover = new MarsRover(Position.at(input.x, input.y).withinWorld(world).facing(input.direction));
-        rover.move(commands);
-        expect(rover.getPosition()).toEqual(expected);
+        manager.addRover(rover);
+      });
+      manager.moveRovers(rovers.map(r => r.commands));
+      const positions = manager.getRoverPositions();
+      positions.forEach((position, i) => {
+        expect(position).toEqual(rovers[i].expected);
       });
     });
   });
