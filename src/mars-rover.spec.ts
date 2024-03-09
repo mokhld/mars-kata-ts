@@ -100,6 +100,9 @@ describe('Mars Rover', () => {
 
   describe.each([
     { side: 'left', input: { x: 0, y: 0, direction: 'W' }, commands: 'f', expected: { x: 15, y: 0 } },
+    { side: 'right', input: { x: 15, y: 0, direction: 'E' }, commands: 'f', expected: { x: 0, y: 0 } },
+    { side: 'up', input: { x: 0, y: 15, direction: 'N' }, commands: 'f', expected: { x: 0, y: 0 } },
+    { side: 'down', input: { x: 0, y: 0, direction: 'S' }, commands: 'f', expected: { x: 0, y: 15 } },
   ])('The world has limits', ({ side, input, commands, expected }) => {
     test(`on the ${side}:`, () => {
       const world = World.wrapping(16, 16);
