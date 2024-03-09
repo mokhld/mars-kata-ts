@@ -1,7 +1,7 @@
 import { Direction, MarsRover, Position, World } from './mars-rover';
 
 function initialiseRover(x, y, directionRaw, world: World = World.unlimited()) {
-  return new MarsRover(Position.at(x, y).facing(directionRaw));
+  return new MarsRover(Position.at(x, y).withinWorld(world).facing(directionRaw));
 }
 
 describe('Mars Rover', () => {
@@ -102,7 +102,7 @@ describe('Mars Rover', () => {
     { side: 'left', input: { x: 0, y: 0, direction: 'W' }, commands: 'f', expected: { x: 15, y: 0 } },
   ])('The world has limits', ({ side, input, commands, expected }) => {
     test(`on the ${side}:`, () => {
-      const world = World.wrapping(15, 15);
+      const world = World.wrapping(16, 16);
       const startingPositionRover = initialiseRover(input.x, input.y, input.direction, world);
       const expectedPositionRover = initialiseRover(expected.x, expected.y, input.direction, world);
 

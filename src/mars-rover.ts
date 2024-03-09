@@ -55,9 +55,13 @@ export class Direction {
 export class Position {
   public static at(x: number, y: number) {
     return {
-      facing(directionRaw: string) {
-        const direction = new Direction(directionRaw);
-        return new Position(x, y, direction);
+      withinWorld(world: World) {
+        return {
+          facing(directionRaw: string) {
+            const direction = new Direction(directionRaw);
+            return new Position(x, y, direction, world);
+          }
+        };
       }
     };
   }
@@ -65,11 +69,13 @@ export class Position {
   private direction: Direction;
   private x: number;
   private y: number;
+  private world: World;
 
-  private constructor(x: number, y: number, direction: Direction) {
+  private constructor(x: number, y: number, direction: Direction, world: World) {
     this.x = x;
     this.y = y;
     this.direction = direction;
+    this.world = world;
   }
 
   public turnLeft() {
@@ -89,18 +95,49 @@ export class Position {
   }
 
   private sumVector(vector) {
-    this.x += vector.x;
-    this.y += vector.y;
+    this.x = this.world.simplifyX(this.x + vector.x);
+    this.y = this.world.simplifyY(this.y + vector.y);
   }
 
 }
 
-export class World {
-  public static unlimited() {
-    return {};
+export abstract class World {
+  public static unlimited(): World {
+    return new UnlimitedWorld();
   }
 
   public static wrapping(width: number, height: number) {
-    return {};
+    return new WrappingWorld(width, height);
+  }
+
+  public abstract simplifyX(value: number): number;
+  public abstract simplifyY(value: number): number;
+}
+
+class WrappingWorld implements World {
+  private height: number;
+  private width: number;
+
+  constructor(width: number, height: number) {
+    this.height = height;
+    this.width = width;
+  }
+
+  public simplifyX(value: number): number {
+    return (value + this.width) % this.width;
+  }
+
+  public simplifyY(value: number): number {
+    return (value + this.height) % this.height;
+  }
+}
+
+class UnlimitedWorld implements World {
+  public simplifyX(value: number): number {
+    return value;
+  }
+
+  public simplifyY(value: number): number {
+    return value;
   }
 }
