@@ -136,4 +136,17 @@ describe('Mars Rover', () => {
       expect(startingPositionRover2).toEqual(expectedPositionRover);
     });
   });
+
+  describe.each([
+    { input: { x: 51, y: 0, direction: 'N' }, commands: 'f', expected: { x: 51, y: 1, direction: 'N' } },
+    { input: { x: 0, y: 51, direction: 'N' }, commands: 'f', expected: { x: 0, y: 52, direction: 'N' } },
+  ])('cannot move beyond maximum coordinates', ({ input, commands, expected }) => {
+    test(`'${commands}': ${input.x}, ${input.y} facing ${input.direction}`, () => {
+      const startingPositionRover = initialiseRover(input.x, input.y, input.direction);
+
+      expect(() => {
+        startingPositionRover.move(commands);
+      }).toThrow("Coordinates out of bounds");
+    });
+  });
 });
