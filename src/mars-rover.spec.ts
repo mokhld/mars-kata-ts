@@ -149,4 +149,15 @@ describe('Mars Rover', () => {
       }).toThrow("Coordinates out of bounds");
     });
   });
+
+  test('cannot accept an instruction string longer than 100 characters', () => {
+    const input = { x: 0, y: 0, direction: 'N' };
+    const startingPositionRover = initialiseRover(input.x, input.y, input.direction);
+    const longInstruction = 'f'.repeat(101);
+
+    expect(() => {
+      startingPositionRover.move(longInstruction);
+    }).toThrow("Instruction string too long");
+  });
+
 });
