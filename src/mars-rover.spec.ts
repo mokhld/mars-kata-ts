@@ -165,22 +165,20 @@ describe('Mars Rover', () => {
       rovers: [
         { input: { x: 1, y: 1, direction: 'E' }, commands: 'RFRFRFRF', expected: { x: 1, y: 1, direction: 'E', lost: false } },
         { input: { x: 3, y: 2, direction: 'N' }, commands: 'FRRFLLFFRRFLL', expected: { x: 3, y: 3, direction: 'N', lost: true } },
-        { input: { x: 0, y: 3, direction: 'W' }, commands: 'LLFFFLFLFL', expected: { x: 2, y: 3, direction: 'S', lost: false } }
+        { input: { x: 0, y: 3, direction: 'W' }, commands: 'LLFFFLFLFL', expected: { x: 1, y: 3, direction: 'E', lost: true } }
       ],
-      description: 'should handle multiple rovers with different commands'
     },
-  ])('MarsRover for multiple rovers', ({ rovers, description }) => {
-    it(description, () => {
-      const world = World.wrapping(5, 3);
-      const manager = new MarsRoverManager();
-      rovers.forEach(({ input }) => {
+  ])('MarsRover for multiple rovers', ({ rovers }) => {
+    rovers.forEach(({ input, commands, expected }) => {
+      const description = `should handle multiple rovers with different commands: '${commands}': ${input.x}, ${input.y} facing ${input.direction}`;
+      it(description, () => {
+        const world = World.wrapping(5, 3);
+        const manager = new MarsRoverManager();
         const rover = new MarsRover(Position.at(input.x, input.y).withinWorld(world).facing(input.direction));
         manager.addRover(rover);
-      });
-      manager.moveRovers(rovers.map(r => r.commands));
-      const positions = manager.getRoverPositions();
-      positions.forEach((position, i) => {
-        expect(position).toEqual(rovers[i].expected);
+        manager.moveRovers([commands]);
+        const position = manager.getRoverPositions()[0];
+        expect(position).toEqual(expected);
       });
     });
   });

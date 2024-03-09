@@ -20,15 +20,15 @@ export class MarsRover {
 
     for (const command of commands.toLowerCase().split('')) {
       if (this.isLost) {
-        // If the rover is lost, ignore the remaining commands
         break;
       }
+      const oldPosition = this.position;
       try {
         MarsRover.map[command](this.position);
       } catch (e) {
         if (e.message === "LOST") {
-          this.position = this.position.getLost();
           this.isLost = true;
+          this.position = oldPosition;
           throw e;
         } else if (e.message === "Coordinates out of bounds") {
           throw Error("Coordinates out of bounds");
@@ -38,7 +38,6 @@ export class MarsRover {
       }
     }
   }
-
 
   public getPosition() {
     return {
@@ -134,12 +133,15 @@ export class Position {
       if (this.world instanceof WrappingWorld) {
         this.world.addLostPosition(this.x, this.y, this.direction.facing);
       }
+      this.x = newX;
+      this.y = newY;
       throw Error("LOST");
     } else {
       this.x = newX;
       this.y = newY;
     }
   }
+
 
   public getLost() {
     return new Lost(this.x, this.y, this.direction, this.world);
@@ -239,6 +241,7 @@ export class Lost extends Position {
 
 export class MarsRoverManager {
   private rovers: MarsRover[] = [];
+  private lostRovers: MarsRover[] = [];
 
   public addRover(rover: MarsRover) {
     this.rovers.push(rover);
@@ -249,16 +252,16 @@ export class MarsRoverManager {
       throw Error("Number of command strings does not match number of rovers");
     }
 
+    const commandsCopy = [...commands];
+
     for (let i = 0; i < this.rovers.length; i++) {
       try {
-        this.rovers[i].move(commands[i]);
+        this.rovers[i].move(commandsCopy[i]);
       } catch (e) {
         if (e.message === "LOST") {
-          // If a rover is lost, remove it from the rovers array
+          this.lostRovers.push(this.rovers[i]);
           this.rovers.splice(i, 1);
-          // Also remove its commands from the commands array
-          commands.splice(i, 1);
-          // Decrement i so the next iteration will process the next rover correctly
+          commandsCopy.splice(i, 1);
           i--;
         } else {
           throw e;
@@ -268,6 +271,6 @@ export class MarsRoverManager {
   }
 
   public getRoverPositions() {
-    return this.rovers.map(rover => rover.getPosition());
+    return [...this.rovers, ...this.lostRovers].map(rover => rover.getPosition());
   }
 }
