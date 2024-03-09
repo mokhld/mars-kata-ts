@@ -99,28 +99,18 @@ describe('Mars Rover', () => {
   });
 
   describe.each([
-    { side: 'left', input: { x: 0, y: 0, direction: 'W' }, expected: { x: 15, y: 0 } },
-    { side: 'right', input: { x: 15, y: 0, direction: 'E' }, expected: { x: 0, y: 0 } },
-    { side: 'up', input: { x: 0, y: 15, direction: 'N' }, expected: { x: 0, y: 0 } },
-    { side: 'down', input: { x: 0, y: 0, direction: 'S' }, expected: { x: 0, y: 15 } },
-  ])('The world has limits', ({ side, input, expected }) => {
+    { side: 'left', input: { x: 0, y: 0, direction: 'W' } },
+    { side: 'right', input: { x: 15, y: 0, direction: 'E' } },
+    { side: 'up', input: { x: 0, y: 15, direction: 'N' } },
+    { side: 'down', input: { x: 0, y: 0, direction: 'S' } },
+  ])('falls off the edge of the grid', ({ side, input }) => {
     test(`on the ${side}:`, () => {
       const world = World.wrapping(16, 16);
       const startingPositionRover = initialiseRover(input.x, input.y, input.direction, world);
-      const expectedPositionRover = initialiseRover(expected.x, expected.y, input.direction, world);
 
-      startingPositionRover.move('f');
-
-      expect(startingPositionRover).toEqual(expectedPositionRover);
+      expect(() => {
+        startingPositionRover.move('f');
+      }).toThrow("LOST");
     });
-  });
-
-  test('falls off the edge of the grid', () => {
-    const world = World.wrapping(16, 16);
-    const startingPositionRover = initialiseRover(15, 15, 'N', world);
-
-    expect(() => {
-      startingPositionRover.move('f');
-    }).toThrow("LOST");
   });
 });
