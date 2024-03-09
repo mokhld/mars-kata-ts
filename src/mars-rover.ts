@@ -139,11 +139,11 @@ class WrappingWorld implements World {
   }
 
   public simplifyX(value: number): number {
-    return (value + this.width) % this.width;
+    return value;
   }
 
   public simplifyY(value: number): number {
-    return (value + this.height) % this.height;
+    return value;
   }
 
   public isValidPosition(x: number, y: number) {
