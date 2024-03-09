@@ -12,13 +12,18 @@ export class MarsRover {
   }
 
   public move(commands: string) {
-    commands.split('').map((command) => {
+    for (const command of commands.split('')) {
       try {
         MarsRover.map[command](this.position);
       } catch (e) {
-        throw Error(`Invalid command '${command}'`);
+        if (e.message === "LOST") {
+          this.position = this.position.getLost();
+          throw Error("LOST");
+        } else {
+          throw Error(`Invalid command '${command}'`);
+        }
       }
-    });
+    }
   }
 }
 
@@ -71,7 +76,7 @@ export class Position {
   private y: number;
   private world: World;
 
-  private constructor(x: number, y: number, direction: Direction, world: World) {
+  constructor(x: number, y: number, direction: Direction, world: World) {
     this.x = x;
     this.y = y;
     this.direction = direction;
@@ -95,10 +100,19 @@ export class Position {
   }
 
   private sumVector(vector) {
-    this.x = this.world.simplifyX(this.x + vector.x);
-    this.y = this.world.simplifyY(this.y + vector.y);
+    const newX = this.world.simplifyX(this.x + vector.x);
+    const newY = this.world.simplifyY(this.y + vector.y);
+    if (!this.world.isValidPosition(newX, newY)) {
+      throw Error("LOST");
+    } else {
+      this.x = newX;
+      this.y = newY;
+    }
   }
 
+  public getLost() {
+    return new Lost(this.x, this.y, this.direction, this.world);
+  }
 }
 
 export abstract class World {
@@ -112,6 +126,7 @@ export abstract class World {
 
   public abstract simplifyX(value: number): number;
   public abstract simplifyY(value: number): number;
+  public abstract isValidPosition(x: number, y: number): boolean;
 }
 
 class WrappingWorld implements World {
@@ -130,6 +145,10 @@ class WrappingWorld implements World {
   public simplifyY(value: number): number {
     return (value + this.height) % this.height;
   }
+
+  public isValidPosition(x: number, y: number) {
+    return x >= 0 && x < this.width && y >= 0 && y < this.height;
+  }
 }
 
 class UnlimitedWorld implements World {
@@ -139,5 +158,17 @@ class UnlimitedWorld implements World {
 
   public simplifyY(value: number): number {
     return value;
+  }
+
+  public isValidPosition(x: number, y: number): boolean {
+    return true;
+  }
+}
+
+export class Lost extends Position {
+  public forward() {
+  }
+
+  public backward() {
   }
 }

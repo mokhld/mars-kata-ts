@@ -114,4 +114,13 @@ describe('Mars Rover', () => {
       expect(startingPositionRover).toEqual(expectedPositionRover);
     });
   });
+
+  test('falls off the edge of the grid', () => {
+    const world = World.wrapping(16, 16);
+    const startingPositionRover = initialiseRover(15, 15, 'N', world);
+
+    expect(() => {
+      startingPositionRover.move('f');
+    }).toThrow("LOST");
+  });
 });
