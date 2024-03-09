@@ -159,5 +159,4 @@ describe('Mars Rover', () => {
       startingPositionRover.move(longInstruction);
     }).toThrow("Instruction string too long");
   });
-
 });

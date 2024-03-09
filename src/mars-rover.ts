@@ -12,6 +12,10 @@ export class MarsRover {
   }
 
   public move(commands: string) {
+    if (commands.length > 100) {
+      throw Error("Instruction string too long");
+    }
+
     for (const command of commands.split('')) {
       try {
         MarsRover.map[command](this.position);
