@@ -19,6 +19,8 @@ export class MarsRover {
         if (e.message === "LOST") {
           this.position = this.position.getLost();
           throw Error("LOST");
+        } else if (e.message === "Coordinates out of bounds") {
+          throw Error("Coordinates out of bounds");
         } else {
           throw Error(`Invalid command '${command}'`);
         }
@@ -102,7 +104,9 @@ export class Position {
   private sumVector(vector) {
     const newX = this.world.simplifyX(this.x + vector.x);
     const newY = this.world.simplifyY(this.y + vector.y);
-    if (!this.world.isValidPosition(newX, newY)) {
+    if ((newX < -50 || newX > 50) || (newY < -50 || newY > 50)) {
+      throw Error("Coordinates out of bounds");
+    } else if (!this.world.isValidPosition(newX, newY)) {
       if (this.world.isLostPosition(this.x, this.y, this.direction.facing)) {
         return;
       }
@@ -132,7 +136,9 @@ export abstract class World {
 
   public abstract simplifyX(value: number): number;
   public abstract simplifyY(value: number): number;
-  public abstract isValidPosition(x: number, y: number): boolean;
+  public isValidPosition(x: number, y: number): boolean {
+    return x >= 0 && x <= 50 && y >= 0 && y <= 50;
+  }
   public abstract isLostPosition(x: number, y: number, direction: string): boolean;
 }
 
@@ -156,7 +162,7 @@ class WrappingWorld extends World {
   }
 
   public isValidPosition(x: number, y: number) {
-    return x >= 0 && x < this.width && y >= 0 && y < this.height;
+    return super.isValidPosition(x, y) && x < this.width && y < this.height;
   }
 
   public isLostPosition(x: number, y: number, direction: string) {
@@ -177,8 +183,8 @@ class UnlimitedWorld extends World {
     return value;
   }
 
-  public isValidPosition(): boolean {
-    return true;
+  public isValidPosition(x: number, y: number) {
+    return x >= -50 && x <= 50 && y >= -50 && y <= 50;
   }
 
   public isLostPosition(): boolean {
