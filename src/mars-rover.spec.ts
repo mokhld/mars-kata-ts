@@ -113,4 +113,27 @@ describe('Mars Rover', () => {
       }).toThrow("LOST");
     });
   });
+
+  describe.each([
+    { side: 'left', input: { x: 0, y: 0, direction: 'W' }, expected: { x: 0, y: 0 } },
+    { side: 'right', input: { x: 15, y: 0, direction: 'E' }, expected: { x: 15, y: 0 } },
+    { side: 'up', input: { x: 0, y: 15, direction: 'N' }, expected: { x: 0, y: 15 } },
+    { side: 'down', input: { x: 0, y: 0, direction: 'S' }, expected: { x: 0, y: 0 } },
+  ])('ignores command to move off the edge from a position where a previous rover has fallen off', ({ side, input, expected }) => {
+    test(`on the ${side}:`, () => {
+      const world = World.wrapping(16, 16);
+      const startingPositionRover1 = initialiseRover(input.x, input.y, input.direction, world);
+      const startingPositionRover2 = initialiseRover(input.x, input.y, input.direction, world);
+      const expectedPositionRover = initialiseRover(expected.x, expected.y, input.direction, world);
+
+      // First rover falls off the edge
+      expect(() => {
+        startingPositionRover1.move('f');
+      }).toThrow("LOST");
+
+      // Second rover ignores the command to move off the edge
+      startingPositionRover2.move('f');
+      expect(startingPositionRover2).toEqual(expectedPositionRover);
+    });
+  });
 });
