@@ -8,10 +8,10 @@ describe('Mars Rover', () => {
   test(`cannot accept an invalid command`, () => {
     const input = { x: 0, y: 0, direction: 'N' };
     const startingPositionRover = initialiseRover(input.x, input.y, input.direction);
-
+    const invalidCommand = 'X';
     expect(() => {
       startingPositionRover.move('X');
-    }).toThrow("Invalid command 'X'");
+    }).toThrow(`Invalid command '${invalidCommand.toLowerCase()}'`);
   });
 
   describe.each([
@@ -163,15 +163,15 @@ describe('Mars Rover', () => {
   describe.each([
     {
       rovers: [
-        { input: { x: 1, y: 1, direction: 'N' }, commands: 'FFRFF', expected: { x: 2, y: 3, direction: 'E' } },
-        { input: { x: 2, y: 2, direction: 'E' }, commands: 'FLFFL', expected: { x: 3, y: 4, direction: 'N' } }
+        { input: { x: 1, y: 1, direction: 'N' }, commands: 'FFRFF', expected: { x: 3, y: 3, direction: 'E', lost: false } },
+        { input: { x: 2, y: 2, direction: 'E' }, commands: 'FLFFL', expected: { x: 3, y: 4, direction: 'W', lost: false } }
       ],
       description: 'should handle multiple rovers sequentially'
     },
     {
       rovers: [
-        { input: { x: 0, y: 0, direction: 'N' }, commands: 'FFFFFFFFFF', expected: { x: 0, y: 10, direction: 'N', lost: true } },
-        { input: { x: 1, y: 1, direction: 'E' }, commands: 'FLFFL', expected: { x: 1, y: 2, direction: 'N' } }
+        { input: { x: 0, y: 0, direction: 'N' }, commands: 'FFFFFFFFFF', expected: { x: 0, y: 10, direction: 'N', lost: false } },
+        { input: { x: 1, y: 1, direction: 'E' }, commands: 'FLFFL', expected: { x: 2, y: 3, direction: 'W', lost: false } }
       ],
       description: 'should ignore commands for a lost rover'
     }
@@ -181,7 +181,7 @@ describe('Mars Rover', () => {
       rovers.forEach(({ input, commands, expected }) => {
         const rover = new MarsRover(Position.at(input.x, input.y).withinWorld(world).facing(input.direction));
         rover.move(commands);
-        expect(rover.position).toEqual(expected);
+        expect(rover.getPosition()).toEqual(expected);
       });
     });
   });

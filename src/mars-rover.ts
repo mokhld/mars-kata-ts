@@ -11,18 +11,25 @@ export class MarsRover {
     this.position = position;
   }
 
+  private isLost: boolean = false;
+
   public move(commands: string) {
     if (commands.length > 100) {
       throw Error("Instruction string too long");
     }
 
-    for (const command of commands.split('')) {
+    for (const command of commands.toLowerCase().split('')) {
+      if (this.isLost) {
+        // If the rover is lost, ignore the remaining commands
+        break;
+      }
       try {
         MarsRover.map[command](this.position);
       } catch (e) {
         if (e.message === "LOST") {
           this.position = this.position.getLost();
-          throw Error("LOST");
+          this.isLost = true;
+          throw e;
         } else if (e.message === "Coordinates out of bounds") {
           throw Error("Coordinates out of bounds");
         } else {
@@ -30,6 +37,16 @@ export class MarsRover {
         }
       }
     }
+  }
+
+
+  public getPosition() {
+    return {
+      x: this.position.getX(),
+      y: this.position.getY(),
+      direction: this.position.getDirection(),
+      lost: this.isLost
+    };
   }
 }
 
@@ -127,6 +144,18 @@ export class Position {
   public getLost() {
     return new Lost(this.x, this.y, this.direction, this.world);
   }
+
+  public getX() {
+    return this.x;
+  }
+
+  public getY() {
+    return this.y;
+  }
+
+  public getDirection() {
+    return this.direction.facing;
+  }
 }
 
 export abstract class World {
@@ -197,9 +226,48 @@ class UnlimitedWorld extends World {
 }
 
 export class Lost extends Position {
+  constructor(x: number, y: number, direction: Direction, world: World) {
+    super(x, y, direction, world);
+  }
+
   public forward() {
   }
 
   public backward() {
+  }
+}
+
+export class MarsRoverManager {
+  private rovers: MarsRover[] = [];
+
+  public addRover(rover: MarsRover) {
+    this.rovers.push(rover);
+  }
+
+  public moveRovers(commands: string[]) {
+    if (commands.length !== this.rovers.length) {
+      throw Error("Number of command strings does not match number of rovers");
+    }
+
+    for (let i = 0; i < this.rovers.length; i++) {
+      try {
+        this.rovers[i].move(commands[i]);
+      } catch (e) {
+        if (e.message === "LOST") {
+          // If a rover is lost, remove it from the rovers array
+          this.rovers.splice(i, 1);
+          // Also remove its commands from the commands array
+          commands.splice(i, 1);
+          // Decrement i so the next iteration will process the next rover correctly
+          i--;
+        } else {
+          throw e;
+        }
+      }
+    }
+  }
+
+  public getRoverPositions() {
+    return this.rovers.map(rover => rover.getPosition());
   }
 }
