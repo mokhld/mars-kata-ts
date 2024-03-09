@@ -103,6 +103,12 @@ export class Position {
     const newX = this.world.simplifyX(this.x + vector.x);
     const newY = this.world.simplifyY(this.y + vector.y);
     if (!this.world.isValidPosition(newX, newY)) {
+      if (this.world.isLostPosition(this.x, this.y, this.direction.facing)) {
+        return;
+      }
+      if (this.world instanceof WrappingWorld) {
+        this.world.addLostPosition(this.x, this.y, this.direction.facing);
+      }
       throw Error("LOST");
     } else {
       this.x = newX;
@@ -127,13 +133,16 @@ export abstract class World {
   public abstract simplifyX(value: number): number;
   public abstract simplifyY(value: number): number;
   public abstract isValidPosition(x: number, y: number): boolean;
+  public abstract isLostPosition(x: number, y: number, direction: string): boolean;
 }
 
-class WrappingWorld implements World {
+class WrappingWorld extends World {
   private height: number;
   private width: number;
+  private lostPositions: { x: number, y: number, direction: string }[] = [];
 
   constructor(width: number, height: number) {
+    super();
     this.height = height;
     this.width = width;
   }
@@ -149,9 +158,17 @@ class WrappingWorld implements World {
   public isValidPosition(x: number, y: number) {
     return x >= 0 && x < this.width && y >= 0 && y < this.height;
   }
+
+  public isLostPosition(x: number, y: number, direction: string) {
+    return this.lostPositions.some(pos => pos.x === x && pos.y === y && pos.direction === direction);
+  }
+
+  public addLostPosition(x: number, y: number, direction: string) {
+    this.lostPositions.push({ x, y, direction });
+  }
 }
 
-class UnlimitedWorld implements World {
+class UnlimitedWorld extends World {
   public simplifyX(value: number): number {
     return value;
   }
@@ -160,8 +177,12 @@ class UnlimitedWorld implements World {
     return value;
   }
 
-  public isValidPosition(x: number, y: number): boolean {
+  public isValidPosition(): boolean {
     return true;
+  }
+
+  public isLostPosition(): boolean {
+    return false;
   }
 }
 
